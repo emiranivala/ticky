@@ -23,30 +23,36 @@ def get(obj, key, default=None):
 # Logout Command
 @Client.on_message(filters.private & filters.command("logout"))
 async def logout(client: Client, message: Message):
-    user_data = await db.is_user_exist(message.chat.id)
-    if not user_data or not await db.get_session(message.chat.id):
-        await message.reply("You are not logged in.")
-        return
+    """Handles the /logout command."""
+    try:
+        user_data = await db.is_user_exist(message.chat.id)
+        if not user_data or not await db.get_session(message.chat.id):
+            await message.reply("You are not logged in.")
+            return
 
-    await db.set_session(message.chat.id, None)
-    await message.reply("**Logout Successful!**")
+        await db.set_session(message.chat.id, None)
+        await message.reply("**Logout Successful!**")
+    except Exception as e:
+        await message.reply(f"<b>Error during logout:</b> {e}")
 
 # Login Command
 @Client.on_message(filters.private & filters.command("login"))
 async def login(client: Client, message: Message):
+    """Handles the /login command."""
     user_id = message.chat.id
 
-    if await db.is_user_exist(user_id):
-        user_data = await db.get_session(user_id)
-        if user_data:
-            await message.reply("You are already logged in.")
-            return
-    else:
-        # Add user to the database
-        await db.add_user(user_id, message.from_user.first_name)
-
     try:
-        # Ask for phone number
+        # Check if the user exists and is already logged in
+        if await db.is_user_exist(user_id):
+            user_data = await db.get_session(user_id)
+            if user_data:
+                await message.reply("You are already logged in.")
+                return
+        else:
+            # Add the user to the database if not exists
+            await db.add_user(user_id, message.from_user.first_name)
+
+        # Ask for the phone number
         phone_number_msg = await client.ask(
             chat_id=user_id,
             text="<b>Send your phone number including country code (e.g., +13124562345).</b>\n\nType /cancel to cancel the process.",
@@ -63,7 +69,7 @@ async def login(client: Client, message: Message):
         await phone_number_msg.reply("Sending OTP...")
         code = await client_temp.send_code(phone_number)
 
-        # Ask for OTP
+        # Ask for the OTP
         phone_code_msg = await client.ask(
             user_id,
             "<b>Enter the OTP sent to your Telegram account. Format: '1 2 3 4 5'</b>\n\nType /cancel to cancel.",
@@ -103,7 +109,7 @@ async def login(client: Client, message: Message):
         await message.reply(f"<b>Unexpected Error:</b>\n<code>{traceback.format_exc()}</code>")
         return
 
-    # Export session string
+    # Export the session string
     try:
         string_session = await client_temp.export_session_string()
         await client_temp.disconnect()
@@ -118,6 +124,3 @@ async def login(client: Client, message: Message):
 
     except Exception as e:
         await message.reply(f"<b>Error during login:</b> {e}")
-        return
-
-
