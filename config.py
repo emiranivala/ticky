@@ -11,4 +11,3 @@ API_HASH = os.environ.get("API_HASH", "509031fb3790b968e489f71d591ebce5")
 
 #Database 
 DB_URI = os.environ.get("DB_URI", "")
-
