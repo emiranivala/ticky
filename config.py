@@ -8,10 +8,10 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 
 # Your API ID from my.telegram.org
-API_ID = int(os.getenv("API_ID", "24210243"))
+API_ID = int(os.getenv("API_ID", "20259558"))
 
 # Your API Hash from my.telegram.org
-API_HASH = os.getenv("API_HASH", "509031fb3790b968e489f71d591ebce5")
+API_HASH = os.getenv("API_HASH", "ce95ed6fecb559fecbb6fb7ebed176e4")
 
 # Database URI
 DB_URI = os.getenv("DB_URI", "")
