@@ -1,5 +1,6 @@
 from pyrogram import Client
 from config import API_ID, API_HASH, BOT_TOKEN
+from database.db import initialize_db  # Import database initialization
 
 class Bot(Client):
     def __init__(self):
@@ -10,16 +11,16 @@ class Bot(Client):
             bot_token=BOT_TOKEN,
             plugins=dict(root="nondatabase"),
             workers=50,
-            sleep_threshold=10,
+            sleep_threshold=10
         )
+        initialize_db()  # Initialize the database connection when bot starts
 
     async def start(self):
         await super().start()
-        print("Bot Started Powered By @She_who_remain")
+        print('Bot Started Powered By @She_who_remain')
 
     async def stop(self, *args):
         await super().stop()
-        print("Bot Stopped Bye")
+        print('Bot Stopped Bye')
 
-if __name__ == "__main__":
-    Bot().run()
+Bot().run()
