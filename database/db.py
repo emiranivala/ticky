@@ -1,19 +1,19 @@
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
+from motor.motor_asyncio import AsyncIOMotorClient
+from dotenv import load_dotenv
 
-# Create a global variable for the database connection
-db_client = None
-db = None
+# Load environment variables
+load_dotenv()
 
+# Get the MongoDB URI from the environment variables
+db_uri = os.getenv("DB_URI")
+
+# Initialize MongoDB client
+db_client = AsyncIOMotorClient(db_uri)
+
+# Function to initialize the database
 async def initialize_db():
-    """
-    Initialize the database connection.
-    """
-    global db_client, db
-    db_uri = os.getenv("DB_URI")  # Ensure DB_URI is in your .env file
-    if not db_uri:
-        raise ValueError("DB_URI is not set. Please check your environment variables.")
-    
-    db_client = AsyncIOMotorClient(db_uri)
-    db = db_client.get_database()  # Access default database in the URI
-    print("Database connection initialized.")
+    global db
+    db = db_client.get_database()  # Automatically use the database defined in the URI
+    print(f"Connected to database: {db.name}")
+
