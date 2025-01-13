@@ -13,9 +13,9 @@ class Bot(Client):
             workers=50,
             sleep_threshold=10
         )
-        initialize_db()  # Initialize the database connection when bot starts
-
+      
     async def start(self):
+        await initialize_db()  # Initialize the database
         await super().start()
         print('Bot Started Powered By @She_who_remain')
 
